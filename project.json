@@ -3,6 +3,7 @@
   "description": "Automate billing process with Quotation, PO, DO, Invoice and Credit Note",
   "main": "Main.xaml",
   "dependencies": {
+    "Microsoft.Activities.Extensions": "[2.0.6.9]",
     "UiPath.Excel.Activities": "[2.10.4]",
     "UiPath.Form.Activities": "[1.1.11]",
     "UiPath.FormActivityLibrary.Contracts": "[1.1.1]",

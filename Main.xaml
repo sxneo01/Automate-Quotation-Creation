@@ -1,6 +1,6 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Main" mva:VisualBasic.Settings="{x:Null}" sap:VirtualizedContainerService.HintSize="906,2316" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:p="http://schemas.uipath.com/workflow/activities/word" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:ufa="clr-namespace:UiPath.Form.Activities;assembly=UiPath.Form.Activities" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="Main" mva:VisualBasic.Settings="{x:Null}" sap:VirtualizedContainerService.HintSize="1143,7982" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:maes="clr-namespace:Microsoft.Activities.Extensions.Statements;assembly=Microsoft.Activities.Extensions" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:p="http://schemas.uipath.com/workflow/activities/word" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:ufa="clr-namespace:UiPath.Form.Activities;assembly=UiPath.Form.Activities" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <TextExpression.NamespacesForImplementation>
-    <scg:List x:TypeArguments="x:String" Capacity="44">
+    <scg:List x:TypeArguments="x:String" Capacity="88">
       <x:String>System.Activities</x:String>
       <x:String>System.Activities.Statements</x:String>
       <x:String>System.Activities.Expressions</x:String>
@@ -45,10 +45,11 @@
       <x:String>UiPath.Shared.Activities</x:String>
       <x:String>Microsoft.VisualBasic.CompilerServices</x:String>
       <x:String>UiPath.DataTableUtilities</x:String>
+      <x:String>Microsoft.Activities.Extensions.Statements</x:String>
     </scg:List>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
-    <scg:List x:TypeArguments="AssemblyReference" Capacity="39">
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="80">
       <AssemblyReference>System.Activities</AssemblyReference>
       <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
       <AssemblyReference>mscorlib</AssemblyReference>
@@ -88,9 +89,12 @@
       <AssemblyReference>UiPath.Mail</AssemblyReference>
       <AssemblyReference>UiPath.OCR.Activities.Design</AssemblyReference>
       <AssemblyReference>UiPath.UIAutomationCore</AssemblyReference>
+      <AssemblyReference>Microsoft.Activities.Extensions</AssemblyReference>
+      <AssemblyReference>Microsoft.Extensions.DependencyModel</AssemblyReference>
+      <AssemblyReference>System.Runtime.WindowsRuntime</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="Sequence 1" sap:VirtualizedContainerService.HintSize="456,2151" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence sap2010:Annotation.AnnotationText="Automate creation of quotation and audit trail" DisplayName="Sequence 1" sap:VirtualizedContainerService.HintSize="1153,9830" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="x:String" Name="formOutput" />
       <Variable x:TypeArguments="sd:DataTable" Name="quoteDT" />
@@ -99,77 +103,309 @@
       <Variable x:TypeArguments="x:String" Name="itemDes" />
       <Variable x:TypeArguments="x:Double" Name="itemCost" />
       <Variable x:TypeArguments="x:String" Name="itemCode" />
-      <Variable x:TypeArguments="x:Int32" Name="doWhileCounter">
-        <Variable.Default>
-          <Literal x:TypeArguments="x:Int32" />
-        </Variable.Default>
-      </Variable>
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="doWhileCounter" />
       <Variable x:TypeArguments="x:Double" Name="subTotal" />
       <Variable x:TypeArguments="scg:Dictionary(x:String, x:String)" Name="formDictionary" />
       <Variable x:TypeArguments="x:Int32" Name="itemQty" />
       <Variable x:TypeArguments="x:String" Name="IsCata" />
+      <Variable x:TypeArguments="sd:DataTable" Name="customerDT" />
+      <Variable x:TypeArguments="sd:DataTable" Name="counterDT" />
+      <Variable x:TypeArguments="x:Int32" Name="trackingCounter" />
+      <Variable x:TypeArguments="sd:DataTable" Name="trackingDT" />
+      <Variable x:TypeArguments="x:String" Name="IsExistingCust" />
+      <Variable x:TypeArguments="scg:List(x:String)" Default="[New list(of String)]" Name="customerList" />
+      <Variable x:TypeArguments="x:String" Name="custSelected" />
     </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <ufa:FormActivity Dismissed="{x:Null}" FormFieldsInputData="{x:Null}" FormHeight="{x:Null}" FormTitle="{x:Null}" FormWidth="{x:Null}" SelectedButton="{x:Null}" TimeoutInSeconds="{x:Null}" WindowPositionLeft="{x:Null}" WindowPositionTop="{x:Null}" DisableMaximizeButton="False" DisableMinimizeButton="False" DisplayName="Create Form" FormFieldsOutputData="[formOutput]" FormSchema="%[{&quot;label&quot;:&quot;Date of issue&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;dateOfIssue&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Customer Contact Person&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;customerContactPerson&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Customer Company Name&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;customerCompanyName&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Customer Address&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;customerAddress&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Customer Postal Code&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;customerPostalCode&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Customer Contact&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;customerContact&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Customer Email&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;customerEmail&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Quotation Validity&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;quotationValidity&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Prepared by&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;preparedBy&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;type&quot;:&quot;button&quot;,&quot;label&quot;:&quot;Submit&quot;,&quot;key&quot;:&quot;submit&quot;,&quot;disableOnInvalid&quot;:true,&quot;input&quot;:true,&quot;tableView&quot;:false}]" FormTheme="{}{&quot;Activities&quot;:[&quot;FORMS&quot;],&quot;Id&quot;:&quot;100120&quot;,&quot;Name&quot;:&quot;Default&quot;,&quot;BaseCss&quot;:&quot;../../assets/css/themes/uipath.bootstrap.min.css&quot;,&quot;ImageSrc&quot;:&quot;../../assets/themeicons/uipath.png&quot;,&quot;OverrideCssUrl&quot;:&quot;../../assets/css/themes/uipath.custom.css&quot;,&quot;UserStyleOverrides&quot;:&quot;&quot;,&quot;Properties&quot;:&quot;&quot;,&quot;IsCustomTheme&quot;:false,&quot;Version&quot;:1,&quot;ThemeVersion&quot;:1}" GenerateInputFields="True" sap:VirtualizedContainerService.HintSize="414,278" sap2010:WorkflowViewState.IdRef="FormActivity_1" IsReadOnly="False" MaxColumnsForSchemaGeneration="6" RunDoBlockFirst="False" RunInIsolatedMode="False">
-      <ufa:FormActivity.Body>
-        <ActivityAction x:TypeArguments="scg:Dictionary(x:String, x:Object)">
-          <Sequence DisplayName="Do" sap:VirtualizedContainerService.HintSize="376,152" sap2010:WorkflowViewState.IdRef="Sequence_2">
+    <ui:MessageBox Caption="{x:Null}" Buttons="YesNo" ChosenButton="[IsExistingCust]" DisplayName="Message Box" sap:VirtualizedContainerService.HintSize="1111,59" sap2010:WorkflowViewState.IdRef="MessageBox_9" Text="[&quot;Is it an existing customer?&quot;]" />
+    <If Condition="[IsExistingCust = &quot;Yes&quot;]" sap:VirtualizedContainerService.HintSize="1111,2873" sap2010:WorkflowViewState.IdRef="If_3">
+      <If.Then>
+        <Sequence sap:VirtualizedContainerService.HintSize="610,2715" sap2010:WorkflowViewState.IdRef="Sequence_23">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <ui:ReadRange AddHeaders="True" DataTable="[customerDT]" DisplayName="Read Range" sap:VirtualizedContainerService.HintSize="568,87" sap2010:WorkflowViewState.IdRef="ReadRange_7" SheetName="customer list" WorkbookPath="quotation_tracking.xlsx">
+            <ui:ReadRange.Range>
+              <InArgument x:TypeArguments="x:String">
+                <Literal x:TypeArguments="x:String" Value="" />
+              </InArgument>
+            </ui:ReadRange.Range>
+          </ui:ReadRange>
+          <ui:ForEachRow ColumnNames="{x:Null}" CurrentIndex="{x:Null}" DataTable="[customerDT]" DisplayName="For Each Row in Data Table" sap:VirtualizedContainerService.HintSize="568,234" sap2010:WorkflowViewState.IdRef="ForEachRow_2">
+            <ui:ForEachRow.Body>
+              <ActivityAction x:TypeArguments="sd:DataRow">
+                <ActivityAction.Argument>
+                  <DelegateInArgument x:TypeArguments="sd:DataRow" Name="CurrentRow" />
+                </ActivityAction.Argument>
+                <Sequence DisplayName="Body" sap:VirtualizedContainerService.HintSize="242,114" sap2010:WorkflowViewState.IdRef="Sequence_22">
+                  <sap:WorkflowViewStateService.ViewState>
+                    <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                      <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                    </scg:Dictionary>
+                  </sap:WorkflowViewStateService.ViewState>
+                  <AddToCollection x:TypeArguments="x:String" Collection="[customerList]" DisplayName="Add To Collection" sap:VirtualizedContainerService.HintSize="200,22" sap2010:WorkflowViewState.IdRef="AddToCollection`1_2" Item="[CurrentRow.Item(&quot;Company&quot;).ToString]" />
+                </Sequence>
+              </ActivityAction>
+            </ui:ForEachRow.Body>
+          </ui:ForEachRow>
+          <ui:InputDialog Options="{x:Null}" sap2010:Annotation.AnnotationText="Prompt user to select existing customer" DisplayName="Input Dialog" sap:VirtualizedContainerService.HintSize="568,93" sap2010:WorkflowViewState.IdRef="InputDialog_6" IsPassword="False" Label="Please select the customer" OptionsString="[String.Join(&quot;;&quot;,customerList)]" Title="Customer Selection">
+            <ui:InputDialog.Result>
+              <OutArgument x:TypeArguments="x:String">[custSelected]</OutArgument>
+            </ui:InputDialog.Result>
             <sap:WorkflowViewStateService.ViewState>
               <scg:Dictionary x:TypeArguments="x:String, x:Object">
-                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+                <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+                <x:Boolean x:Key="IsPinned">False</x:Boolean>
               </scg:Dictionary>
             </sap:WorkflowViewStateService.ViewState>
-            <ui:DeserializeJson x:TypeArguments="scg:Dictionary(x:String, x:String)" DisplayName="Deserialize JSON" sap:VirtualizedContainerService.HintSize="334,60" sap2010:WorkflowViewState.IdRef="DeserializeJson`1_3" JsonObject="[formDictionary]" JsonString="[formOutput]" />
-          </Sequence>
-        </ActivityAction>
-      </ufa:FormActivity.Body>
-      <ufa:FormActivity.DelayBody>
-        <ActivityAction x:TypeArguments="scg:Dictionary(x:String, x:Object)">
-          <Delay Duration="00:00:00.2500000" sap2010:WorkflowViewState.IdRef="Delay_1" />
-        </ActivityAction>
-      </ufa:FormActivity.DelayBody>
-      <ufa:FormActivity.FormFieldsCollection>
-        <scg:Dictionary x:TypeArguments="x:String, Argument" />
-      </ufa:FormActivity.FormFieldsCollection>
-    </ufa:FormActivity>
-    <ui:ReadRange AddHeaders="True" DataTable="[pricelistDT]" DisplayName="Read Range" sap:VirtualizedContainerService.HintSize="414,87" sap2010:WorkflowViewState.IdRef="ReadRange_1" SheetName="pricelist" WorkbookPath="pricelist.xlsx">
+          </ui:InputDialog>
+          <ui:LogMessage DisplayName="Log Message" sap:VirtualizedContainerService.HintSize="568,91" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Retrieving records from Customer ID list...&quot;]" />
+          <ui:ForEachRow ColumnNames="{x:Null}" CurrentIndex="{x:Null}" sap2010:Annotation.AnnotationText="Create the dictionary based on selected customer" DataTable="[customerDT]" DisplayName="For Each Row in Data Table" sap:VirtualizedContainerService.HintSize="568,1958" sap2010:WorkflowViewState.IdRef="ForEachRow_3">
+            <ui:ForEachRow.Body>
+              <ActivityAction x:TypeArguments="sd:DataRow">
+                <ActivityAction.Argument>
+                  <DelegateInArgument x:TypeArguments="sd:DataRow" Name="CurrentRow" />
+                </ActivityAction.Argument>
+                <Sequence DisplayName="Body" sap:VirtualizedContainerService.HintSize="534,1807" sap2010:WorkflowViewState.IdRef="Sequence_24">
+                  <sap:WorkflowViewStateService.ViewState>
+                    <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                      <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                    </scg:Dictionary>
+                  </sap:WorkflowViewStateService.ViewState>
+                  <If Condition="[custSelected = CurrentRow(&quot;Company&quot;).ToString]" sap:VirtualizedContainerService.HintSize="492,1715" sap2010:WorkflowViewState.IdRef="If_4">
+                    <If.Then>
+                      <Sequence sap:VirtualizedContainerService.HintSize="456,1538" sap2010:WorkflowViewState.IdRef="Sequence_25">
+                        <sap:WorkflowViewStateService.ViewState>
+                          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                          </scg:Dictionary>
+                        </sap:WorkflowViewStateService.ViewState>
+                        <Assign sap:VirtualizedContainerService.HintSize="414,60" sap2010:WorkflowViewState.IdRef="Assign_16">
+                          <Assign.To>
+                            <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:String)">[formDictionary]</OutArgument>
+                          </Assign.To>
+                          <Assign.Value>
+                            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)">[new Dictionary(Of String, String)]</InArgument>
+                          </Assign.Value>
+                        </Assign>
+                        <ufa:FormActivity Dismissed="{x:Null}" FormFieldsInputData="{x:Null}" FormHeight="{x:Null}" FormTitle="{x:Null}" FormWidth="{x:Null}" SelectedButton="{x:Null}" TimeoutInSeconds="{x:Null}" WindowPositionLeft="{x:Null}" WindowPositionTop="{x:Null}" DisableMaximizeButton="False" DisableMinimizeButton="False" DisplayName="Create Form" FormFieldsOutputData="[formOutput]" FormSchema="%[{&quot;label&quot;:&quot;Date of Issue&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;dateOfIssue&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Quotation Validity&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;quotationValidity&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Prepared by&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;preparedBy&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;type&quot;:&quot;button&quot;,&quot;label&quot;:&quot;Submit&quot;,&quot;key&quot;:&quot;submit&quot;,&quot;disableOnInvalid&quot;:true,&quot;input&quot;:true,&quot;tableView&quot;:false}]" FormTheme="{}{&quot;Activities&quot;:[&quot;FORMS&quot;],&quot;Id&quot;:&quot;100120&quot;,&quot;Name&quot;:&quot;Default&quot;,&quot;BaseCss&quot;:&quot;../../assets/css/themes/uipath.bootstrap.min.css&quot;,&quot;ImageSrc&quot;:&quot;../../assets/themeicons/uipath.png&quot;,&quot;OverrideCssUrl&quot;:&quot;../../assets/css/themes/uipath.custom.css&quot;,&quot;UserStyleOverrides&quot;:&quot;&quot;,&quot;Properties&quot;:&quot;&quot;,&quot;IsCustomTheme&quot;:false,&quot;Version&quot;:1,&quot;ThemeVersion&quot;:1}" GenerateInputFields="True" sap:VirtualizedContainerService.HintSize="414,278" sap2010:WorkflowViewState.IdRef="FormActivity_3" IsReadOnly="False" MaxColumnsForSchemaGeneration="6" RunDoBlockFirst="False" RunInIsolatedMode="False">
+                          <ufa:FormActivity.Body>
+                            <ActivityAction x:TypeArguments="scg:Dictionary(x:String, x:Object)">
+                              <Sequence DisplayName="Do" sap:VirtualizedContainerService.HintSize="376,152" sap2010:WorkflowViewState.IdRef="Sequence_29">
+                                <sap:WorkflowViewStateService.ViewState>
+                                  <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                                    <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                                  </scg:Dictionary>
+                                </sap:WorkflowViewStateService.ViewState>
+                                <ui:DeserializeJson x:TypeArguments="scg:Dictionary(x:String, x:String)" DisplayName="Deserialize JSON" sap:VirtualizedContainerService.HintSize="334,60" sap2010:WorkflowViewState.IdRef="DeserializeJson`1_5" JsonObject="[formDictionary]" JsonString="[formOutput]" />
+                              </Sequence>
+                            </ActivityAction>
+                          </ufa:FormActivity.Body>
+                          <ufa:FormActivity.DelayBody>
+                            <ActivityAction x:TypeArguments="scg:Dictionary(x:String, x:Object)">
+                              <Delay Duration="00:00:00.2500000" sap2010:WorkflowViewState.IdRef="Delay_3" />
+                            </ActivityAction>
+                          </ufa:FormActivity.DelayBody>
+                          <ufa:FormActivity.FormFieldsCollection>
+                            <scg:Dictionary x:TypeArguments="x:String, Argument" />
+                          </ufa:FormActivity.FormFieldsCollection>
+                        </ufa:FormActivity>
+                        <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[formDictionary]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="414,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_1" Key="customerContactPerson" Value="[CurrentRow(1).ToString]" />
+                        <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[formDictionary]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="414,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_2" Key="customerCompanyName" Value="[CurrentRow(2).ToString]" />
+                        <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[formDictionary]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="414,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_3" Key="customerAddress" Value="[CurrentRow(3).ToString]" />
+                        <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[formDictionary]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="414,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_4" Key="customerPostalCode" Value="[CurrentRow(4).ToString]" />
+                        <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[formDictionary]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="414,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_5" Key="customerContact" Value="[CurrentRow(5).ToString]" />
+                        <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[formDictionary]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="414,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_6" Key="customerEmail" Value="[CurrentRow(6).ToString]" />
+                      </Sequence>
+                    </If.Then>
+                  </If>
+                </Sequence>
+              </ActivityAction>
+            </ui:ForEachRow.Body>
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                <x:Boolean x:Key="IsPinned">False</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+          </ui:ForEachRow>
+        </Sequence>
+      </If.Then>
+      <If.Else>
+        <ufa:FormActivity Dismissed="{x:Null}" FormFieldsInputData="{x:Null}" FormHeight="{x:Null}" FormTitle="{x:Null}" FormWidth="{x:Null}" SelectedButton="{x:Null}" TimeoutInSeconds="{x:Null}" WindowPositionLeft="{x:Null}" WindowPositionTop="{x:Null}" DisableMaximizeButton="False" DisableMinimizeButton="False" DisplayName="Create Form" FormFieldsOutputData="[formOutput]" FormSchema="%[{&quot;label&quot;:&quot;Date of issue&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;dateOfIssue&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Customer Contact Person&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;customerContactPerson&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Customer Company Name&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;customerCompanyName&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Customer Address&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;customerAddress&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Customer Postal Code&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;customerPostalCode&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Customer Contact&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;customerContact&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Customer Email&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;customerEmail&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Quotation Validity&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;quotationValidity&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;label&quot;:&quot;Prepared by&quot;,&quot;tableView&quot;:true,&quot;key&quot;:&quot;preparedBy&quot;,&quot;type&quot;:&quot;textfield&quot;,&quot;input&quot;:true},{&quot;type&quot;:&quot;button&quot;,&quot;label&quot;:&quot;Submit&quot;,&quot;key&quot;:&quot;submit&quot;,&quot;disableOnInvalid&quot;:true,&quot;input&quot;:true,&quot;tableView&quot;:false}]" FormTheme="{}{&quot;Activities&quot;:[&quot;FORMS&quot;],&quot;Id&quot;:&quot;100120&quot;,&quot;Name&quot;:&quot;Default&quot;,&quot;BaseCss&quot;:&quot;../../assets/css/themes/uipath.bootstrap.min.css&quot;,&quot;ImageSrc&quot;:&quot;../../assets/themeicons/uipath.png&quot;,&quot;OverrideCssUrl&quot;:&quot;../../assets/css/themes/uipath.custom.css&quot;,&quot;UserStyleOverrides&quot;:&quot;&quot;,&quot;Properties&quot;:&quot;&quot;,&quot;IsCustomTheme&quot;:false,&quot;Version&quot;:1,&quot;ThemeVersion&quot;:1}" GenerateInputFields="True" sap:VirtualizedContainerService.HintSize="456,1516" sap2010:WorkflowViewState.IdRef="FormActivity_1" IsReadOnly="False" MaxColumnsForSchemaGeneration="6" RunDoBlockFirst="False" RunInIsolatedMode="False">
+          <ufa:FormActivity.Body>
+            <ActivityAction x:TypeArguments="scg:Dictionary(x:String, x:Object)">
+              <Sequence DisplayName="Do" sap:VirtualizedContainerService.HintSize="418,1390" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                <sap:WorkflowViewStateService.ViewState>
+                  <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                    <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                  </scg:Dictionary>
+                </sap:WorkflowViewStateService.ViewState>
+                <ui:DeserializeJson x:TypeArguments="scg:Dictionary(x:String, x:String)" DisplayName="Deserialize JSON" sap:VirtualizedContainerService.HintSize="376,60" sap2010:WorkflowViewState.IdRef="DeserializeJson`1_3" JsonObject="[formDictionary]" JsonString="[formOutput]" />
+                <Sequence sap2010:Annotation.AnnotationText="Create new customer ID" sap:VirtualizedContainerService.HintSize="376,1198" sap2010:WorkflowViewState.IdRef="Sequence_21">
+                  <Sequence.Variables>
+                    <Variable x:TypeArguments="x:Int32" Name="custCounter" />
+                  </Sequence.Variables>
+                  <sap:WorkflowViewStateService.ViewState>
+                    <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                      <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                      <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+                    </scg:Dictionary>
+                  </sap:WorkflowViewStateService.ViewState>
+                  <ui:ReadRange AddHeaders="False" DataTable="[counterDT]" DisplayName="Read Range" sap:VirtualizedContainerService.HintSize="334,87" sap2010:WorkflowViewState.IdRef="ReadRange_6" SheetName="Config file" WorkbookPath="quotation_tracking.xlsx">
+                    <ui:ReadRange.Range>
+                      <InArgument x:TypeArguments="x:String">
+                        <Literal x:TypeArguments="x:String" Value="" />
+                      </InArgument>
+                    </ui:ReadRange.Range>
+                  </ui:ReadRange>
+                  <ui:BuildDataTable DataTable="[customerDT]" DisplayName="Build Data Table" sap:VirtualizedContainerService.HintSize="334,59" sap2010:WorkflowViewState.IdRef="BuildDataTable_2" TableInfo="&lt;NewDataSet&gt;&#xD;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xD;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;TableName&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xD;&#xA;      &lt;xs:complexType&gt;&#xD;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xD;&#xA;          &lt;xs:element name=&quot;TableName&quot;&gt;&#xD;&#xA;            &lt;xs:complexType&gt;&#xD;&#xA;              &lt;xs:sequence&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Customer_x0020_ID&quot; msdata:Caption=&quot;&quot; minOccurs=&quot;0&quot;&gt;&#xD;&#xA;                  &lt;xs:simpleType&gt;&#xD;&#xA;                    &lt;xs:restriction base=&quot;xs:string&quot;&gt;&#xD;&#xA;                      &lt;xs:maxLength value=&quot;100&quot; /&gt;&#xD;&#xA;                    &lt;/xs:restriction&gt;&#xD;&#xA;                  &lt;/xs:simpleType&gt;&#xD;&#xA;                &lt;/xs:element&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Customer_x0020_Rep&quot; msdata:Caption=&quot;&quot; minOccurs=&quot;0&quot;&gt;&#xD;&#xA;                  &lt;xs:simpleType&gt;&#xD;&#xA;                    &lt;xs:restriction base=&quot;xs:string&quot;&gt;&#xD;&#xA;                      &lt;xs:maxLength value=&quot;100&quot; /&gt;&#xD;&#xA;                    &lt;/xs:restriction&gt;&#xD;&#xA;                  &lt;/xs:simpleType&gt;&#xD;&#xA;                &lt;/xs:element&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Company&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Address&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Postal_x0020_Code&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Contact&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Email&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;              &lt;/xs:sequence&gt;&#xD;&#xA;            &lt;/xs:complexType&gt;&#xD;&#xA;          &lt;/xs:element&gt;&#xD;&#xA;        &lt;/xs:choice&gt;&#xD;&#xA;      &lt;/xs:complexType&gt;&#xD;&#xA;    &lt;/xs:element&gt;&#xD;&#xA;  &lt;/xs:schema&gt;&#xD;&#xA;  &lt;TableName&gt;&#xD;&#xA;    &lt;Customer_x0020_ID&gt;text&lt;/Customer_x0020_ID&gt;&#xD;&#xA;  &lt;/TableName&gt;&#xD;&#xA;&lt;/NewDataSet&gt;" />
+                  <ui:LogMessage DisplayName="Log Message" sap:VirtualizedContainerService.HintSize="334,91" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;Creating new Customer ID...&quot;]" />
+                  <ui:AddDataRow ArrayRow="{x:Null}" DataRow="[customerDT.NewRow]" DataTable="[customerDT]" DisplayName="Add Data Row" sap:VirtualizedContainerService.HintSize="334,22" sap2010:WorkflowViewState.IdRef="AddDataRow_6" />
+                  <ui:MultipleAssign DisplayName="Multiple Assign" sap:VirtualizedContainerService.HintSize="334,346" sap2010:WorkflowViewState.IdRef="MultipleAssign_5">
+                    <ui:MultipleAssign.AssignOperations>
+                      <scg:List x:TypeArguments="ui:AssignOperation" Capacity="16">
+                        <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_23">
+                          <ui:AssignOperation.To>
+                            <OutArgument x:TypeArguments="x:Object">[customerDT.Rows(0).Item("Customer ID")]</OutArgument>
+                          </ui:AssignOperation.To>
+                          <ui:AssignOperation.Value>
+                            <InArgument x:TypeArguments="x:String">["Cust_#" + counterDT.Rows(0).Item(1).ToString]</InArgument>
+                          </ui:AssignOperation.Value>
+                        </ui:AssignOperation>
+                        <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_24">
+                          <ui:AssignOperation.To>
+                            <OutArgument x:TypeArguments="x:Object">[customerDT.Rows(0).Item("Customer Rep")]</OutArgument>
+                          </ui:AssignOperation.To>
+                          <ui:AssignOperation.Value>
+                            <InArgument x:TypeArguments="x:Object">[formDictionary("customerContactPerson")]</InArgument>
+                          </ui:AssignOperation.Value>
+                        </ui:AssignOperation>
+                        <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_25">
+                          <ui:AssignOperation.To>
+                            <OutArgument x:TypeArguments="x:Object">[customerDT.Rows(0).Item("Company")]</OutArgument>
+                          </ui:AssignOperation.To>
+                          <ui:AssignOperation.Value>
+                            <InArgument x:TypeArguments="x:Object">[formDictionary("customerCompanyName")]</InArgument>
+                          </ui:AssignOperation.Value>
+                        </ui:AssignOperation>
+                        <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_26">
+                          <ui:AssignOperation.To>
+                            <OutArgument x:TypeArguments="x:Object">[customerDT.Rows(0).Item("Address")]</OutArgument>
+                          </ui:AssignOperation.To>
+                          <ui:AssignOperation.Value>
+                            <InArgument x:TypeArguments="x:Object">[formDictionary("customerAddress")]</InArgument>
+                          </ui:AssignOperation.Value>
+                        </ui:AssignOperation>
+                        <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_27">
+                          <ui:AssignOperation.To>
+                            <OutArgument x:TypeArguments="x:Object">[customerDT.Rows(0).Item("Postal Code")]</OutArgument>
+                          </ui:AssignOperation.To>
+                          <ui:AssignOperation.Value>
+                            <InArgument x:TypeArguments="x:Object">[formDictionary("customerPostalCode")]</InArgument>
+                          </ui:AssignOperation.Value>
+                        </ui:AssignOperation>
+                        <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_28">
+                          <ui:AssignOperation.To>
+                            <OutArgument x:TypeArguments="x:Object">[customerDT.Rows(0).Item("Contact")]</OutArgument>
+                          </ui:AssignOperation.To>
+                          <ui:AssignOperation.Value>
+                            <InArgument x:TypeArguments="x:Object">[formDictionary("customerContact")]</InArgument>
+                          </ui:AssignOperation.Value>
+                        </ui:AssignOperation>
+                        <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_29">
+                          <ui:AssignOperation.To>
+                            <OutArgument x:TypeArguments="x:Object">[customerDT.Rows(0).Item("Email")]</OutArgument>
+                          </ui:AssignOperation.To>
+                          <ui:AssignOperation.Value>
+                            <InArgument x:TypeArguments="x:Object">[formDictionary("customerEmail")]</InArgument>
+                          </ui:AssignOperation.Value>
+                        </ui:AssignOperation>
+                        <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_30">
+                          <ui:AssignOperation.To>
+                            <OutArgument x:TypeArguments="x:Int32">[custCounter]</OutArgument>
+                          </ui:AssignOperation.To>
+                          <ui:AssignOperation.Value>
+                            <InArgument x:TypeArguments="x:Int32">[CInt(counterDT.Rows(0).Item(1)) + 1]</InArgument>
+                          </ui:AssignOperation.Value>
+                        </ui:AssignOperation>
+                        <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_31">
+                          <ui:AssignOperation.To>
+                            <OutArgument x:TypeArguments="x:Object">[counterDT.Rows(0).Item(1)]</OutArgument>
+                          </ui:AssignOperation.To>
+                          <ui:AssignOperation.Value>
+                            <InArgument x:TypeArguments="x:Object">[custCounter]</InArgument>
+                          </ui:AssignOperation.Value>
+                        </ui:AssignOperation>
+                      </scg:List>
+                    </ui:MultipleAssign.AssignOperations>
+                  </ui:MultipleAssign>
+                  <ui:AppendRange DataTable="[customerDT]" DisplayName="Append Range" sap:VirtualizedContainerService.HintSize="334,115" sap2010:WorkflowViewState.IdRef="AppendRange_2" SheetName="customer list" WorkbookPath="quotation_tracking.xlsx" />
+                  <ui:WriteRange AddHeaders="False" DataTable="[counterDT]" DisplayName="Write Range" sap:VirtualizedContainerService.HintSize="334,115" sap2010:WorkflowViewState.IdRef="WriteRange_4" SheetName="Config file" StartingCell="A1" WorkbookPath="quotation_tracking.xlsx" />
+                </Sequence>
+              </Sequence>
+            </ActivityAction>
+          </ufa:FormActivity.Body>
+          <ufa:FormActivity.DelayBody>
+            <ActivityAction x:TypeArguments="scg:Dictionary(x:String, x:Object)">
+              <Delay Duration="00:00:00.2500000" sap2010:WorkflowViewState.IdRef="Delay_1" />
+            </ActivityAction>
+          </ufa:FormActivity.DelayBody>
+          <ufa:FormActivity.FormFieldsCollection>
+            <scg:Dictionary x:TypeArguments="x:String, Argument" />
+          </ufa:FormActivity.FormFieldsCollection>
+        </ufa:FormActivity>
+      </If.Else>
+    </If>
+    <ui:ReadRange AddHeaders="True" DataTable="[pricelistDT]" DisplayName="Read Range" sap:VirtualizedContainerService.HintSize="1111,87" sap2010:WorkflowViewState.IdRef="ReadRange_1" SheetName="pricelist" WorkbookPath="pricelist.xlsx">
       <ui:ReadRange.Range>
         <InArgument x:TypeArguments="x:String">
           <Literal x:TypeArguments="x:String" Value="" />
         </InArgument>
       </ui:ReadRange.Range>
     </ui:ReadRange>
-    <ui:BuildDataTable DataTable="[quoteDT]" DisplayName="Build Data Table" sap:VirtualizedContainerService.HintSize="414,59" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xD;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xD;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;TableName&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xD;&#xA;      &lt;xs:complexType&gt;&#xD;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xD;&#xA;          &lt;xs:element name=&quot;TableName&quot;&gt;&#xD;&#xA;            &lt;xs:complexType&gt;&#xD;&#xA;              &lt;xs:sequence&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Item_x0020_Code&quot; msdata:Caption=&quot;&quot; minOccurs=&quot;0&quot;&gt;&#xD;&#xA;                  &lt;xs:simpleType&gt;&#xD;&#xA;                    &lt;xs:restriction base=&quot;xs:string&quot;&gt;&#xD;&#xA;                      &lt;xs:maxLength value=&quot;100&quot; /&gt;&#xD;&#xA;                    &lt;/xs:restriction&gt;&#xD;&#xA;                  &lt;/xs:simpleType&gt;&#xD;&#xA;                &lt;/xs:element&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Item_x0020_Description&quot; msdata:Caption=&quot;&quot; minOccurs=&quot;0&quot;&gt;&#xD;&#xA;                  &lt;xs:simpleType&gt;&#xD;&#xA;                    &lt;xs:restriction base=&quot;xs:string&quot;&gt;&#xD;&#xA;                      &lt;xs:maxLength value=&quot;100&quot; /&gt;&#xD;&#xA;                    &lt;/xs:restriction&gt;&#xD;&#xA;                  &lt;/xs:simpleType&gt;&#xD;&#xA;                &lt;/xs:element&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Qty&quot; msdata:Caption=&quot;&quot; type=&quot;xs:int&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Unit_x0020_Price&quot; msdata:Caption=&quot;&quot; minOccurs=&quot;0&quot;&gt;&#xD;&#xA;                  &lt;xs:simpleType&gt;&#xD;&#xA;                    &lt;xs:restriction base=&quot;xs:string&quot;&gt;&#xD;&#xA;                      &lt;xs:maxLength value=&quot;100&quot; /&gt;&#xD;&#xA;                    &lt;/xs:restriction&gt;&#xD;&#xA;                  &lt;/xs:simpleType&gt;&#xD;&#xA;                &lt;/xs:element&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Amount&quot; msdata:Caption=&quot;&quot; type=&quot;xs:double&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;              &lt;/xs:sequence&gt;&#xD;&#xA;            &lt;/xs:complexType&gt;&#xD;&#xA;          &lt;/xs:element&gt;&#xD;&#xA;        &lt;/xs:choice&gt;&#xD;&#xA;      &lt;/xs:complexType&gt;&#xD;&#xA;    &lt;/xs:element&gt;&#xD;&#xA;  &lt;/xs:schema&gt;&#xD;&#xA;&lt;/NewDataSet&gt;" />
-    <ui:InterruptibleDoWhile sap2010:Annotation.AnnotationText="Prompt to input item order" DisplayName="Do While" sap:VirtualizedContainerService.HintSize="414,82" sap2010:WorkflowViewState.IdRef="InterruptibleDoWhile_1">
+    <ui:BuildDataTable DataTable="[quoteDT]" DisplayName="Build Data Table" sap:VirtualizedContainerService.HintSize="1111,59" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;TableName&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;TableName&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;Item_x0020_Code&quot; msdata:Caption=&quot;&quot; minOccurs=&quot;0&quot;&gt;&#xA;                  &lt;xs:simpleType&gt;&#xA;                    &lt;xs:restriction base=&quot;xs:string&quot;&gt;&#xA;                      &lt;xs:maxLength value=&quot;100&quot; /&gt;&#xA;                    &lt;/xs:restriction&gt;&#xA;                  &lt;/xs:simpleType&gt;&#xA;                &lt;/xs:element&gt;&#xA;                &lt;xs:element name=&quot;Item_x0020_Description&quot; msdata:Caption=&quot;&quot; minOccurs=&quot;0&quot;&gt;&#xA;                  &lt;xs:simpleType&gt;&#xA;                    &lt;xs:restriction base=&quot;xs:string&quot;&gt;&#xA;                      &lt;xs:maxLength value=&quot;100&quot; /&gt;&#xA;                    &lt;/xs:restriction&gt;&#xA;                  &lt;/xs:simpleType&gt;&#xA;                &lt;/xs:element&gt;&#xA;                &lt;xs:element name=&quot;Qty&quot; msdata:Caption=&quot;&quot; type=&quot;xs:int&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Unit_x0020_Price&quot; msdata:Caption=&quot;&quot; minOccurs=&quot;0&quot;&gt;&#xA;                  &lt;xs:simpleType&gt;&#xA;                    &lt;xs:restriction base=&quot;xs:string&quot;&gt;&#xA;                      &lt;xs:maxLength value=&quot;100&quot; /&gt;&#xA;                    &lt;/xs:restriction&gt;&#xA;                  &lt;/xs:simpleType&gt;&#xA;                &lt;/xs:element&gt;&#xA;                &lt;xs:element name=&quot;Amount&quot; msdata:Caption=&quot;&quot; type=&quot;xs:double&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
+    <ui:InterruptibleDoWhile sap2010:Annotation.AnnotationText="Prompt to input item order" DisplayName="Do While" sap:VirtualizedContainerService.HintSize="1111,1469" sap2010:WorkflowViewState.IdRef="InterruptibleDoWhile_1">
       <ui:InterruptibleDoWhile.Body>
-        <Sequence DisplayName="Body" sap:VirtualizedContainerService.HintSize="839,2265" sap2010:WorkflowViewState.IdRef="Sequence_5">
+        <Sequence DisplayName="Body" sap:VirtualizedContainerService.HintSize="418,1273" sap2010:WorkflowViewState.IdRef="Sequence_5">
           <sap:WorkflowViewStateService.ViewState>
             <scg:Dictionary x:TypeArguments="x:String, x:Object">
               <x:Boolean x:Key="IsExpanded">True</x:Boolean>
             </scg:Dictionary>
           </sap:WorkflowViewStateService.ViewState>
-          <ui:MessageBox Caption="{x:Null}" Buttons="YesNo" ChosenButton="[IsCata]" DisplayName="Message Box" sap:VirtualizedContainerService.HintSize="797,59" sap2010:WorkflowViewState.IdRef="MessageBox_7" Text="[&quot;Select from catalogue?&quot;]" />
-          <If Condition="[IsCata = &quot;Yes&quot;]" sap:VirtualizedContainerService.HintSize="797,1043" sap2010:WorkflowViewState.IdRef="If_2">
+          <ui:MessageBox Caption="{x:Null}" Buttons="YesNo" ChosenButton="[IsCata]" DisplayName="Message Box" sap:VirtualizedContainerService.HintSize="376,59" sap2010:WorkflowViewState.IdRef="MessageBox_7" Text="[&quot;Select from catalogue?&quot;]" />
+          <If Condition="[IsCata = &quot;Yes&quot;]" sap:VirtualizedContainerService.HintSize="376,51" sap2010:WorkflowViewState.IdRef="If_2">
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+                <x:Boolean x:Key="IsPinned">False</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
             <If.Then>
-              <Sequence sap:VirtualizedContainerService.HintSize="376,546" sap2010:WorkflowViewState.IdRef="Sequence_10">
+              <Sequence sap:VirtualizedContainerService.HintSize="644,1185" sap2010:WorkflowViewState.IdRef="Sequence_10">
                 <sap:WorkflowViewStateService.ViewState>
                   <scg:Dictionary x:TypeArguments="x:String, x:Object">
                     <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                   </scg:Dictionary>
                 </sap:WorkflowViewStateService.ViewState>
-                <ui:InputDialog OptionsString="{x:Null}" DisplayName="Input Dialog" sap:VirtualizedContainerService.HintSize="334,291" sap2010:WorkflowViewState.IdRef="InputDialog_1" IsPassword="False" Label="[&quot;Please enter item code:&quot; + vbNewLine + vbNewLine +&quot;A1 - 3ft Free Standing Table&quot; +vbNewLine + &quot;A2 - 4ft Free Standing Table&quot; + vbNewLine +&quot;B1 - Executive Chair with armrest&quot; + vbNewLine +&quot;B2 - Office Chair without armrest&quot; + vbNewLine +&quot;C1 - 2 Chest Drawer&quot; +vbNewLine + &quot;C2 - 4 Chest Drawer&quot;]" Options="[{&quot;A1&quot;,&quot;A2&quot;,&quot;B1&quot;,&quot;B2&quot;,&quot;C1&quot;,&quot;C2&quot;}]" Title="Input Quotation Description">
+                <ui:InputDialog OptionsString="{x:Null}" DisplayName="Input Dialog" sap:VirtualizedContainerService.HintSize="602,291" sap2010:WorkflowViewState.IdRef="InputDialog_1" IsPassword="False" Label="[&quot;Please enter item code:&quot; + vbNewLine + vbNewLine +&quot;A1 - 3ft Free Standing Table&quot; +vbNewLine + &quot;A2 - 4ft Free Standing Table&quot; + vbNewLine +&quot;B1 - Executive Chair with armrest&quot; + vbNewLine +&quot;B2 - Office Chair without armrest&quot; + vbNewLine +&quot;C1 - 2 Chest Drawer&quot; +vbNewLine + &quot;C2 - 4 Chest Drawer&quot;]" Options="[{&quot;A1&quot;,&quot;A2&quot;,&quot;B1&quot;,&quot;B2&quot;,&quot;C1&quot;,&quot;C2&quot;}]" Title="Input Quotation Description">
                   <ui:InputDialog.Result>
                     <OutArgument x:TypeArguments="x:String">[itemCode]</OutArgument>
                   </ui:InputDialog.Result>
                 </ui:InputDialog>
-                <Sequence sap2010:Annotation.AnnotationText="Retrieve item description and unit price from the pricelist based on user's selection" DisplayName="Retrieve Item Description and Price" sap:VirtualizedContainerService.HintSize="334,123" sap2010:WorkflowViewState.IdRef="Sequence_8">
+                <Sequence sap2010:Annotation.AnnotationText="Retrieve item description and unit price from the pricelist based on user's selection" DisplayName="Retrieve Item Description and Price" sap:VirtualizedContainerService.HintSize="602,762" sap2010:WorkflowViewState.IdRef="Sequence_8">
                   <sap:WorkflowViewStateService.ViewState>
                     <scg:Dictionary x:TypeArguments="x:String, x:Object">
-                      <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+                      <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                       <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
                       <x:Boolean x:Key="IsPinned">False</x:Boolean>
                     </scg:Dictionary>
@@ -245,12 +481,12 @@
               </Sequence>
             </If.Else>
           </If>
-          <ui:InputDialog Options="{x:Null}" OptionsString="{x:Null}" DisplayName="Input Dialog" sap:VirtualizedContainerService.HintSize="797,238" sap2010:WorkflowViewState.IdRef="InputDialog_2" IsPassword="False" Label="Please enter item quantity" Title="Input Quotation Quantity">
+          <ui:InputDialog Options="{x:Null}" OptionsString="{x:Null}" DisplayName="Input Dialog" sap:VirtualizedContainerService.HintSize="376,238" sap2010:WorkflowViewState.IdRef="InputDialog_2" IsPassword="False" Label="Please enter item quantity" Title="Input Quotation Quantity">
             <ui:InputDialog.Result>
               <OutArgument x:TypeArguments="x:Int32">[itemQty]</OutArgument>
             </ui:InputDialog.Result>
           </ui:InputDialog>
-          <Sequence DisplayName="Add into datatable" sap:VirtualizedContainerService.HintSize="797,514" sap2010:WorkflowViewState.IdRef="Sequence_6">
+          <Sequence DisplayName="Add into datatable" sap:VirtualizedContainerService.HintSize="376,514" sap2010:WorkflowViewState.IdRef="Sequence_6">
             <sap:WorkflowViewStateService.ViewState>
               <scg:Dictionary x:TypeArguments="x:String, x:Object">
                 <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -318,7 +554,7 @@
               </ui:MultipleAssign.AssignOperations>
             </ui:MultipleAssign>
           </Sequence>
-          <Assign sap:VirtualizedContainerService.HintSize="797,60" sap2010:WorkflowViewState.IdRef="Assign_4">
+          <Assign sap:VirtualizedContainerService.HintSize="376,60" sap2010:WorkflowViewState.IdRef="Assign_4">
             <Assign.To>
               <OutArgument x:TypeArguments="x:Int32">[doWhileCounter]</OutArgument>
             </Assign.To>
@@ -326,7 +562,7 @@
               <InArgument x:TypeArguments="x:Int32">[doWhileCounter + 1]</InArgument>
             </Assign.Value>
           </Assign>
-          <ui:MessageBox Caption="{x:Null}" Buttons="YesNo" ChosenButton="[IsCont]" DisplayName="Message Box" sap:VirtualizedContainerService.HintSize="797,59" sap2010:WorkflowViewState.IdRef="MessageBox_5" Text="[&quot;Do you which to add next item into the quotation?&quot;]" />
+          <ui:MessageBox Caption="{x:Null}" Buttons="YesNo" ChosenButton="[IsCont]" DisplayName="Message Box" sap:VirtualizedContainerService.HintSize="376,59" sap2010:WorkflowViewState.IdRef="MessageBox_5" Text="[&quot;Do you which to add next item into the quotation?&quot;]" />
         </Sequence>
       </ui:InterruptibleDoWhile.Body>
       <ui:InterruptibleDoWhile.Condition>
@@ -334,13 +570,13 @@
       </ui:InterruptibleDoWhile.Condition>
       <sap:WorkflowViewStateService.ViewState>
         <scg:Dictionary x:TypeArguments="x:String, x:Object">
-          <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
           <x:Boolean x:Key="IsPinned">False</x:Boolean>
           <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
         </scg:Dictionary>
       </sap:WorkflowViewStateService.ViewState>
     </ui:InterruptibleDoWhile>
-    <Sequence sap2010:Annotation.AnnotationText="Add SubTotal, Tax, and Grandtotal into quoteDT" sap:VirtualizedContainerService.HintSize="414,108" sap2010:WorkflowViewState.IdRef="Sequence_12">
+    <Sequence sap2010:Annotation.AnnotationText="Add SubTotal, Tax, and Grandtotal into quoteDT" sap:VirtualizedContainerService.HintSize="1111,108" sap2010:WorkflowViewState.IdRef="Sequence_12">
       <sap:WorkflowViewStateService.ViewState>
         <scg:Dictionary x:TypeArguments="x:String, x:Object">
           <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -412,64 +648,26 @@
         </sap:WorkflowViewStateService.ViewState>
       </ui:MultipleAssign>
     </Sequence>
-    <Sequence sap2010:Annotation.AnnotationText="Generate Quotation" sap:VirtualizedContainerService.HintSize="414,97" sap2010:WorkflowViewState.IdRef="Sequence_13">
+    <ui:LogMessage DisplayName="Log Message" sap:VirtualizedContainerService.HintSize="1111,91" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;Tabulating Item Order..&quot;]" />
+    <Sequence sap2010:Annotation.AnnotationText="Generate Quotation" sap:VirtualizedContainerService.HintSize="1111,280" sap2010:WorkflowViewState.IdRef="Sequence_13">
       <sap:WorkflowViewStateService.ViewState>
         <scg:Dictionary x:TypeArguments="x:String, x:Object">
-          <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
           <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
           <x:Boolean x:Key="IsPinned">False</x:Boolean>
         </scg:Dictionary>
       </sap:WorkflowViewStateService.ViewState>
-      <ui:CopyFile ContinueOnError="{x:Null}" Destination="newQuote.docx" DisplayName="Copy File" sap:VirtualizedContainerService.HintSize="510,157" sap2010:WorkflowViewState.IdRef="CopyFile_1" Overwrite="True" Path="quotation_template.docx" />
-      <p:WordApplicationScope AutoSave="False" DisplayName="Word Application Scope" FilePath="newQuote.docx" sap:VirtualizedContainerService.HintSize="510,2460" sap2010:WorkflowViewState.IdRef="WordApplicationScope_1">
-        <p:WordApplicationScope.Body>
-          <ActivityAction x:TypeArguments="ui:WordDocument">
-            <ActivityAction.Argument>
-              <DelegateInArgument x:TypeArguments="ui:WordDocument" Name="WordDocumentScope" />
-            </ActivityAction.Argument>
-            <Sequence DisplayName="Do" sap:VirtualizedContainerService.HintSize="476,2351" sap2010:WorkflowViewState.IdRef="Sequence_14">
-              <sap:WorkflowViewStateService.ViewState>
-                <scg:Dictionary x:TypeArguments="x:String, x:Object">
-                  <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-                </scg:Dictionary>
-              </sap:WorkflowViewStateService.ViewState>
-              <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_2" Replace="[formDictionary(&quot;dateOfIssue&quot;)]" ReplaceAll="True" Search="&lt;Date of issue&gt;" />
-              <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_4" Replace="[formDictionary(&quot;customerContactPerson&quot;)]" ReplaceAll="True" Search="&lt;Customer Rep&gt;" />
-              <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_5" Replace="[formDictionary(&quot;customerCompanyName&quot;)]" ReplaceAll="True" Search="&lt;Customer Company&gt;" />
-              <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_6" Replace="[formDictionary(&quot;customerAddress&quot;)]" ReplaceAll="True" Search="&lt;Customer Address&gt;" />
-              <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_7" Replace="[formDictionary(&quot;customerPostalCode&quot;)]" ReplaceAll="True" Search="&lt;Customer Postal Code&gt;" />
-              <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_8" Replace="[formDictionary(&quot;customerContact&quot;)]" ReplaceAll="True" Search="&lt;Customer Contact&gt;" />
-              <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_9" Replace="[formDictionary(&quot;customerEmail&quot;)]" ReplaceAll="True" Search="&lt;Customer Email&gt;" />
-              <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_10" Replace="[formDictionary(&quot;quotationValidity&quot;)]" ReplaceAll="True" Search="&lt;Quotation Validity&gt;" />
-              <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_11" Replace="[formDictionary(&quot;preparedBy&quot;)]" ReplaceAll="True" Search="&lt;Prepared by&gt;" />
-              <p:WordInsertDataTable Bookmark="{x:Null}" OccurrenceIndex="{x:Null}" DataTable="[quoteDT]" DisplayName="Insert DataTable in Document" sap:VirtualizedContainerService.HintSize="434,292" sap2010:WorkflowViewState.IdRef="WordInsertDataTable_2" InsertRelativeTo="Text" Occurrence="First" Position="Replace" Text="&lt;Price Table&gt;" />
-              <p:WordExportToPdf DisplayName="Save Document as PDF" FilePath="quotation.pdf" sap:VirtualizedContainerService.HintSize="434,109" sap2010:WorkflowViewState.IdRef="WordExportToPdf_1" />
-            </Sequence>
-          </ActivityAction>
-        </p:WordApplicationScope.Body>
-      </p:WordApplicationScope>
+      <ui:CopyFile ContinueOnError="{x:Null}" Destination="newQuote.docx" DisplayName="Copy File" sap:VirtualizedContainerService.HintSize="434,157" sap2010:WorkflowViewState.IdRef="CopyFile_1" Overwrite="True" Path="quotation_template.docx" />
     </Sequence>
-    <Sequence sap2010:Annotation.AnnotationText="Update quotation tracking" sap:VirtualizedContainerService.HintSize="414,1108" sap2010:WorkflowViewState.IdRef="Sequence_20">
-      <Sequence.Variables>
-        <Variable x:TypeArguments="sd:DataTable" Name="trackingDT" />
-        <Variable x:TypeArguments="x:Int32" Name="trackingCounter" />
-        <Variable x:TypeArguments="sd:DataTable" Name="counterDT" />
-      </Sequence.Variables>
+    <Sequence sap2010:Annotation.AnnotationText="Update quotation tracking" sap:VirtualizedContainerService.HintSize="1111,1429" sap2010:WorkflowViewState.IdRef="Sequence_20">
       <sap:WorkflowViewStateService.ViewState>
         <scg:Dictionary x:TypeArguments="x:String, x:Object">
           <x:Boolean x:Key="IsExpanded">True</x:Boolean>
           <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
         </scg:Dictionary>
       </sap:WorkflowViewStateService.ViewState>
-      <ui:ReadRange AddHeaders="True" DataTable="[trackingDT]" DisplayName="Read Range" sap:VirtualizedContainerService.HintSize="334,87" sap2010:WorkflowViewState.IdRef="ReadRange_3" SheetName="quotation tracking" WorkbookPath="quotation_tracking.xlsx">
-        <ui:ReadRange.Range>
-          <InArgument x:TypeArguments="x:String">
-            <Literal x:TypeArguments="x:String" Value="" />
-          </InArgument>
-        </ui:ReadRange.Range>
-      </ui:ReadRange>
-      <ui:AddDataRow ArrayRow="{x:Null}" DataRow="[trackingDT.NewRow]" DataTable="[trackingDT]" DisplayName="Add Data Row" sap:VirtualizedContainerService.HintSize="334,22" sap2010:WorkflowViewState.IdRef="AddDataRow_5" />
-      <ui:ReadRange AddHeaders="False" DataTable="[counterDT]" DisplayName="Read Range" sap:VirtualizedContainerService.HintSize="334,87" sap2010:WorkflowViewState.IdRef="ReadRange_4" SheetName="Counter" WorkbookPath="quotation_tracking.xlsx">
+      <ui:LogMessage DisplayName="Log Message" sap:VirtualizedContainerService.HintSize="334,91" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[&quot;Updating Quotation Tracking Record...&quot;]" />
+      <ui:ReadRange AddHeaders="False" DataTable="[counterDT]" DisplayName="Read Range" sap:VirtualizedContainerService.HintSize="334,87" sap2010:WorkflowViewState.IdRef="ReadRange_8" SheetName="Config file" WorkbookPath="quotation_tracking.xlsx">
         <ui:ReadRange.Range>
           <InArgument x:TypeArguments="x:String">
             <Literal x:TypeArguments="x:String" Value="" />
@@ -484,15 +682,94 @@
           <InArgument x:TypeArguments="x:Int32">[CInt(counterDT.Rows(0).Item(0))]</InArgument>
         </Assign.Value>
       </Assign>
-      <ui:MessageBox Caption="{x:Null}" ChosenButton="{x:Null}" DisplayName="Message Box" sap:VirtualizedContainerService.HintSize="334,59" sap2010:WorkflowViewState.IdRef="MessageBox_8" Text="[trackingCounter]" />
-      <Assign sap:VirtualizedContainerService.HintSize="334,60" sap2010:WorkflowViewState.IdRef="Assign_13">
-        <Assign.To>
-          <OutArgument x:TypeArguments="x:Object">[trackingDT.Rows(0).Item(0)]</OutArgument>
-        </Assign.To>
-        <Assign.Value>
-          <InArgument x:TypeArguments="x:Object">["Quote_#"+trackingCounter.ToString]</InArgument>
-        </Assign.Value>
-      </Assign>
+      <ui:BuildDataTable DataTable="[trackingDT]" DisplayName="Build Data Table" sap:VirtualizedContainerService.HintSize="334,59" sap2010:WorkflowViewState.IdRef="BuildDataTable_3" TableInfo="&lt;NewDataSet&gt;&#xD;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xD;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;TableName&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xD;&#xA;      &lt;xs:complexType&gt;&#xD;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xD;&#xA;          &lt;xs:element name=&quot;TableName&quot;&gt;&#xD;&#xA;            &lt;xs:complexType&gt;&#xD;&#xA;              &lt;xs:sequence&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Quotation_x0023_&quot; msdata:Caption=&quot;&quot; minOccurs=&quot;0&quot;&gt;&#xD;&#xA;                  &lt;xs:simpleType&gt;&#xD;&#xA;                    &lt;xs:restriction base=&quot;xs:string&quot;&gt;&#xD;&#xA;                      &lt;xs:maxLength value=&quot;100&quot; /&gt;&#xD;&#xA;                    &lt;/xs:restriction&gt;&#xD;&#xA;                  &lt;/xs:simpleType&gt;&#xD;&#xA;                &lt;/xs:element&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Date_x0020_of_x0020_Issue&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Quotation_x0020_Validity&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Customer_x0020_Rep&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Company&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Address&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Postal_x0020_Code&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Contact&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Email&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;Prepared_x0020_by&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;              &lt;/xs:sequence&gt;&#xD;&#xA;            &lt;/xs:complexType&gt;&#xD;&#xA;          &lt;/xs:element&gt;&#xD;&#xA;        &lt;/xs:choice&gt;&#xD;&#xA;      &lt;/xs:complexType&gt;&#xD;&#xA;    &lt;/xs:element&gt;&#xD;&#xA;  &lt;/xs:schema&gt;&#xD;&#xA;&lt;/NewDataSet&gt;" />
+      <ui:AddDataRow ArrayRow="{x:Null}" DataRow="[trackingDT.NewRow]" DataTable="[trackingDT]" DisplayName="Add Data Row" sap:VirtualizedContainerService.HintSize="334,22" sap2010:WorkflowViewState.IdRef="AddDataRow_7" />
+      <ui:MultipleAssign DisplayName="Multiple Assign" sap:VirtualizedContainerService.HintSize="334,377" sap2010:WorkflowViewState.IdRef="MultipleAssign_4">
+        <ui:MultipleAssign.AssignOperations>
+          <scg:List x:TypeArguments="ui:AssignOperation" Capacity="16">
+            <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_13">
+              <ui:AssignOperation.To>
+                <OutArgument x:TypeArguments="x:Object">[trackingDT.Rows(0).Item("Quotation#")]</OutArgument>
+              </ui:AssignOperation.To>
+              <ui:AssignOperation.Value>
+                <InArgument x:TypeArguments="x:Object">["Quote_#"+trackingCounter.ToString]</InArgument>
+              </ui:AssignOperation.Value>
+            </ui:AssignOperation>
+            <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_14">
+              <ui:AssignOperation.To>
+                <OutArgument x:TypeArguments="x:Object">[trackingDT.Rows(0).Item("Date of Issue")]</OutArgument>
+              </ui:AssignOperation.To>
+              <ui:AssignOperation.Value>
+                <InArgument x:TypeArguments="x:Object">[formDictionary("dateOfIssue")]</InArgument>
+              </ui:AssignOperation.Value>
+            </ui:AssignOperation>
+            <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_15">
+              <ui:AssignOperation.To>
+                <OutArgument x:TypeArguments="x:Object">[trackingDT.Rows(0).Item("Quotation Validity")]</OutArgument>
+              </ui:AssignOperation.To>
+              <ui:AssignOperation.Value>
+                <InArgument x:TypeArguments="x:Object">[formDictionary("quotationValidity")]</InArgument>
+              </ui:AssignOperation.Value>
+            </ui:AssignOperation>
+            <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_16">
+              <ui:AssignOperation.To>
+                <OutArgument x:TypeArguments="x:Object">[trackingDT.Rows(0).Item("Customer Rep")]</OutArgument>
+              </ui:AssignOperation.To>
+              <ui:AssignOperation.Value>
+                <InArgument x:TypeArguments="x:Object">[formDictionary("customerContactPerson")]</InArgument>
+              </ui:AssignOperation.Value>
+            </ui:AssignOperation>
+            <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_17">
+              <ui:AssignOperation.To>
+                <OutArgument x:TypeArguments="x:Object">[trackingDT.Rows(0).Item("Company")]</OutArgument>
+              </ui:AssignOperation.To>
+              <ui:AssignOperation.Value>
+                <InArgument x:TypeArguments="x:Object">[formDictionary("customerCompanyName")]</InArgument>
+              </ui:AssignOperation.Value>
+            </ui:AssignOperation>
+            <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_18">
+              <ui:AssignOperation.To>
+                <OutArgument x:TypeArguments="x:Object">[trackingDT.Rows(0).Item("Address")]</OutArgument>
+              </ui:AssignOperation.To>
+              <ui:AssignOperation.Value>
+                <InArgument x:TypeArguments="x:Object">[formDictionary("customerAddress")]</InArgument>
+              </ui:AssignOperation.Value>
+            </ui:AssignOperation>
+            <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_19">
+              <ui:AssignOperation.To>
+                <OutArgument x:TypeArguments="x:Object">[trackingDT.Rows(0).Item("Postal Code")]</OutArgument>
+              </ui:AssignOperation.To>
+              <ui:AssignOperation.Value>
+                <InArgument x:TypeArguments="x:Object">[formDictionary("customerPostalCode")]</InArgument>
+              </ui:AssignOperation.Value>
+            </ui:AssignOperation>
+            <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_20">
+              <ui:AssignOperation.To>
+                <OutArgument x:TypeArguments="x:Object">[trackingDT.Rows(0).Item("Contact")]</OutArgument>
+              </ui:AssignOperation.To>
+              <ui:AssignOperation.Value>
+                <InArgument x:TypeArguments="x:Object">[formDictionary("customerContact")]</InArgument>
+              </ui:AssignOperation.Value>
+            </ui:AssignOperation>
+            <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_21">
+              <ui:AssignOperation.To>
+                <OutArgument x:TypeArguments="x:Object">[trackingDT.Rows(0).Item("Email")]</OutArgument>
+              </ui:AssignOperation.To>
+              <ui:AssignOperation.Value>
+                <InArgument x:TypeArguments="x:Object">[formDictionary("customerEmail")]</InArgument>
+              </ui:AssignOperation.Value>
+            </ui:AssignOperation>
+            <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_22">
+              <ui:AssignOperation.To>
+                <OutArgument x:TypeArguments="x:Object">[trackingDT.Rows(0).Item("Prepared by")]</OutArgument>
+              </ui:AssignOperation.To>
+              <ui:AssignOperation.Value>
+                <InArgument x:TypeArguments="x:String">[formDictionary("preparedBy")]</InArgument>
+              </ui:AssignOperation.Value>
+            </ui:AssignOperation>
+          </scg:List>
+        </ui:MultipleAssign.AssignOperations>
+      </ui:MultipleAssign>
       <Assign sap:VirtualizedContainerService.HintSize="334,60" sap2010:WorkflowViewState.IdRef="Assign_11">
         <Assign.To>
           <OutArgument x:TypeArguments="x:Object">[counterDT.Rows(0).Item(0)]</OutArgument>
@@ -502,7 +779,37 @@
         </Assign.Value>
       </Assign>
       <ui:AppendRange DataTable="[trackingDT]" DisplayName="Append Range" sap:VirtualizedContainerService.HintSize="334,115" sap2010:WorkflowViewState.IdRef="AppendRange_1" SheetName="quotation tracking" WorkbookPath="quotation_tracking.xlsx" />
-      <ui:WriteRange AddHeaders="False" DataTable="[counterDT]" DisplayName="Write Range" sap:VirtualizedContainerService.HintSize="334,115" sap2010:WorkflowViewState.IdRef="WriteRange_3" SheetName="Counter" StartingCell="A1" WorkbookPath="quotation_tracking.xlsx" />
+      <ui:WriteRange AddHeaders="False" DataTable="[counterDT]" DisplayName="Write Range" sap:VirtualizedContainerService.HintSize="334,115" sap2010:WorkflowViewState.IdRef="WriteRange_3" SheetName="Config file" StartingCell="A1" WorkbookPath="quotation_tracking.xlsx" />
     </Sequence>
+    <ui:LogMessage DisplayName="Log Message" sap:VirtualizedContainerService.HintSize="1111,91" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Info" Message="[&quot;Generating Quotation...&quot;]" />
+    <p:WordApplicationScope AutoSave="False" DisplayName="Word Application Scope" FilePath="newQuote.docx" sap:VirtualizedContainerService.HintSize="1111,2662" sap2010:WorkflowViewState.IdRef="WordApplicationScope_2">
+      <p:WordApplicationScope.Body>
+        <ActivityAction x:TypeArguments="ui:WordDocument">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="ui:WordDocument" Name="WordDocumentScope" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Do" sap:VirtualizedContainerService.HintSize="476,2553" sap2010:WorkflowViewState.IdRef="Sequence_30">
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+            <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_12" Replace="[formDictionary(&quot;dateOfIssue&quot;)]" ReplaceAll="True" Search="&lt;Date of issue&gt;" />
+            <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_21" Replace="[trackingDT.Rows(0).Item(&quot;Quotation#&quot;).ToString]" ReplaceAll="True" Search="&lt;Quotation#&gt;" />
+            <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_13" Replace="[formDictionary(&quot;customerContactPerson&quot;)]" ReplaceAll="True" Search="&lt;Customer Rep&gt;" />
+            <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_14" Replace="[formDictionary(&quot;customerCompanyName&quot;)]" ReplaceAll="True" Search="&lt;Customer Company&gt;" />
+            <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_15" Replace="[formDictionary(&quot;customerAddress&quot;)]" ReplaceAll="True" Search="&lt;Customer Address&gt;" />
+            <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_16" Replace="[formDictionary(&quot;customerPostalCode&quot;)]" ReplaceAll="True" Search="&lt;Customer Postal Code&gt;" />
+            <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_17" Replace="[formDictionary(&quot;customerContact&quot;)]" ReplaceAll="True" Search="&lt;Customer Contact&gt;" />
+            <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_18" Replace="[formDictionary(&quot;customerEmail&quot;)]" ReplaceAll="True" Search="&lt;Customer Email&gt;" />
+            <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_19" Replace="[formDictionary(&quot;quotationValidity&quot;)]" ReplaceAll="True" Search="&lt;Quotation Validity&gt;" />
+            <p:WordReplaceText Found="{x:Null}" DisplayName="Replace Text in Document" sap:VirtualizedContainerService.HintSize="434,162" sap2010:WorkflowViewState.IdRef="WordReplaceText_20" Replace="[formDictionary(&quot;preparedBy&quot;)]" ReplaceAll="True" Search="&lt;Prepared by&gt;" />
+            <p:WordInsertDataTable Bookmark="{x:Null}" OccurrenceIndex="{x:Null}" DataTable="[quoteDT]" DisplayName="Insert DataTable in Document" sap:VirtualizedContainerService.HintSize="434,292" sap2010:WorkflowViewState.IdRef="WordInsertDataTable_3" InsertRelativeTo="Text" Occurrence="First" Position="Replace" Text="&lt;Price Table&gt;" />
+            <p:WordExportToPdf DisplayName="Save Document as PDF" FilePath="[&quot;Quotations\&quot; +trackingDT.Rows(0).Item(&quot;Quotation#&quot;).ToString+&quot;_&quot; + formDictionary(&quot;customerCompanyName&quot;) + &quot;.pdf&quot;]" sap:VirtualizedContainerService.HintSize="434,109" sap2010:WorkflowViewState.IdRef="WordExportToPdf_2" />
+          </Sequence>
+        </ActivityAction>
+      </p:WordApplicationScope.Body>
+    </p:WordApplicationScope>
+    <ui:MessageBox Caption="{x:Null}" ChosenButton="{x:Null}" DisplayName="Message Box" sap:VirtualizedContainerService.HintSize="1111,59" sap2010:WorkflowViewState.IdRef="MessageBox_19" Text="[&quot;Quotation Successfully Created!&quot;]" />
   </Sequence>
 </Activity>
